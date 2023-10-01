@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
         player = GetComponent<Rigidbody2D>();
         //set to 2 so that you cannot jump in mid air as soon as the game starts
         numjump = 2;
-
+        
         baseGravity = player.gravityScale;
     }
     
@@ -57,27 +57,31 @@ public class PlayerMovement : MonoBehaviour
             numjump = 1;
             player.velocity = new Vector2(player.velocity.x  , jumpforce);
 
+            //adds jumpbppst speed while in the air
             movementSpeed = movementSpeed + jumpFowardBoost;
         }
 
         if (player.velocity.y < 0)
         {
-            Debug.Log("Negative velocity");
+            
             isFalling = true;
-
+             
         }
-
-        if(isFalling )
+        if (isFalling)
         {
-            player.gravityScale = baseGravity + 5;
+            player.gravityScale = baseGravity + 10;
             isFalling = false;
+
+
         }
-        
+
+
     }
 
    
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //removes jumpboost seed when hitting the floor
         if(numjump == 1 && collision.gameObject.CompareTag("Floor"))
         {
             movementSpeed = movementSpeed - jumpFowardBoost;
@@ -95,6 +99,17 @@ public class PlayerMovement : MonoBehaviour
         {
             SceneManager.LoadScene("SampleScene");
         }
+       
     }
 
+
+
+    public float getplayerposx()
+    {
+        return player.position.x; 
+    }
+    public float getplayerposy()
+    {  
+        return player.position.y;
+    }
 }

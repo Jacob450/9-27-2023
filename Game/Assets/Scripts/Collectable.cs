@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-    Rigidbody2D collectable;
+    public int collectableValue;
+    public GameObject playerObject;
+    private PlayerScore gameScore;
+
+    
     // Start is called before the first frame update
     void Start()
     {
-        collectable = GetComponent<Rigidbody2D>();
+        gameScore = playerObject.GetComponent<PlayerScore>();
     }
 
     // Update is called once per frame
@@ -17,10 +21,11 @@ public class Collectable : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            gameScore.setPlayerScore(collectableValue);
             Destroy(this.gameObject);
         }
     }
