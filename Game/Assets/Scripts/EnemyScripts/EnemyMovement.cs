@@ -15,14 +15,16 @@ public class EnemyMovement : MonoBehaviour
     public float movementSpeed;
     public float jumpFowardBoost;
     public float jumpForce;
+    private bool canJump;
+    private bool isWall;
     // Start is called before the first frame update
     void Start()
     {
         enemy = GetComponent<Rigidbody2D>();
         player = playerobject.GetComponent<PlayerMovement>();
         collide = collider.GetComponent<WallCollider>();
-
-        numjump = 2;
+        canJump = false;
+        isWall = false;
         baseGravity = enemy.gravityScale;
     }
 
@@ -31,6 +33,10 @@ public class EnemyMovement : MonoBehaviour
     {
         followPlayer();
         jump();
+        if (isWall)
+        {
+            crawl();
+        }
     }
 
     void followPlayer()
@@ -52,30 +58,56 @@ public class EnemyMovement : MonoBehaviour
 
     void jump()
     {
-        if ((enemy.position.y < player.getplayerposy()-1 && numjump == 0 && collide.getCollide() == true))
+        if ((enemy.position.y < player.getplayerposy()-1 && canJump == true && collide.getCollide() == true))
         {
            
-            numjump = 1;
+            
             enemy.velocity = new Vector2(enemy.velocity.x, jumpForce);
 
             //adds jumpboost speed while in the air
-            movementSpeed = movementSpeed + jumpFowardBoost;
+            
         }
+
+    }
+
+    private void crawl()
+    {
+        
+
+
+        enemy.velocity = new Vector2(enemy.velocity.x, movementSpeed);
 
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //removes jumpboost seed when hitting the floor
-        if (numjump == 1 && collision.gameObject.CompareTag("Floor") )
-        {
-            movementSpeed = movementSpeed - jumpFowardBoost;
 
-        }
         if (collision.gameObject.CompareTag("Floor"))
         {
-            numjump = 0;
+            canJump = true;
+            Debug.Log("canJump true");
         }
+        //crawling on wall
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Debug.Log("Wall Collision");
+            isWall = true;
+        }
+
         collide.setCollide(false);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            canJump = false;
+            Debug.Log("canJump False");
+        }
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            isWall = false;
+        }
+
     }
 }

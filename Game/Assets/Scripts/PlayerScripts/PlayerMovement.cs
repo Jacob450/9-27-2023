@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D player;
+    public GameObject cam; 
 
     public float movementSpeed;
     public float jumpforce;
@@ -14,18 +15,21 @@ public class PlayerMovement : MonoBehaviour
 
     private float baseGravity;
     private float inputHorizontal;
+    private float inputVertical;
 
     private int numjump;
-    
-    private bool isFalling;
+    private bool canJump;
+    private bool isJumping;
+    private bool isWall;
 
     // Start is called before the first frame update
     void Start()
     {
+        
         player = GetComponent<Rigidbody2D>();
         //set to 2 so that you cannot jump in mid air as soon as the game starts
-        numjump = 2;
-        
+        canJump = false;
+        isWall = false;
         baseGravity = player.gravityScale;
     }
     
@@ -34,6 +38,11 @@ public class PlayerMovement : MonoBehaviour
     {
         moveplayer();
         jump();
+        if(isWall)
+        {
+            crawl();
+        }
+        
     }
     
     private void moveplayer()
@@ -45,51 +54,54 @@ public class PlayerMovement : MonoBehaviour
         
         
         player.velocity = new Vector2((movementSpeed * inputHorizontal) , player.velocity.y);
-        
+       
         
     }
 
     private void jump()
     {
         player.gravityScale = baseGravity;
-        if (Input.GetKeyDown(KeyCode.Space) && numjump == 0)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump == true)
         {
-            numjump = 1;
+            isJumping = true;
+            movementSpeed += jumpFowardBoost;
             player.velocity = new Vector2(player.velocity.x  , jumpforce);
 
             //adds jumpbppst speed while in the air
-            movementSpeed = movementSpeed + jumpFowardBoost;
+           // movementSpeed += jumpFowardBoost;
         }
-
-        if (player.velocity.y < 0)
-        {
-            
-            isFalling = true;
-             
-        }
-        if (isFalling)
-        {
-            player.gravityScale = baseGravity + 10;
-            isFalling = false;
-
-
-        }
-
+        
 
     }
 
+    private void crawl()
+    {
+        inputVertical = Input.GetAxisRaw("Vertical");
+
+
+        player.velocity = new Vector2(player.velocity.x, movementSpeed * inputVertical);
+        
+    }
    
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //removes jumpboost seed when hitting the floor
-        if(numjump == 1 && collision.gameObject.CompareTag("Floor"))
+        
+        //removes jumpboost speed when hitting the floor
+        if(isJumping == true && collision.gameObject.CompareTag("Floor"))
         {
-            movementSpeed = movementSpeed - jumpFowardBoost;
-            
+            movementSpeed -=  jumpFowardBoost;
+            isJumping=false;
         }
+        //crawling on wall
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Debug.Log("Wall Collision");
+           isWall = true;
+        }
+
         if (collision.gameObject.CompareTag("Floor"))
         {
-            numjump = 0;
+            canJump = true;
         }
         if (collision.gameObject.CompareTag("Collectable"))
         {
@@ -100,6 +112,19 @@ public class PlayerMovement : MonoBehaviour
             SceneManager.LoadScene("SampleScene");
         }
        
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            canJump = false;
+        }
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            isWall = false;
+        }
+
     }
 
 

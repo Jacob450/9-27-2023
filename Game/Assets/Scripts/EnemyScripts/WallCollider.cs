@@ -19,16 +19,12 @@ public class WallCollider : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            Debug.Log("True");
-            didCollide = true;
-        }
+        didCollide = true;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        Debug.Log("False");
+        //Debug.Log("False");
         didCollide = false;
     }
 
@@ -41,4 +37,5 @@ public class WallCollider : MonoBehaviour
     {
         didCollide=value;
     }
+    
 }
