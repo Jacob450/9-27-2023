@@ -8,6 +8,7 @@ TagManager:
   - OB
   - Collectable
   - Wall
+  - Enemy
   layers:
   - Default
   - TransparentFX

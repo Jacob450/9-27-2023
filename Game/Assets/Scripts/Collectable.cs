@@ -5,27 +5,53 @@ using UnityEngine;
 public class Collectable : MonoBehaviour
 {
     public int collectableValue;
-    public GameObject playerObject;
-    private PlayerScore gameScore;
-
-    
+   
+    public int offset;
+    private float startPosY;
+    private bool moveUp;
     // Start is called before the first frame update
     void Start()
     {
-        gameScore = playerObject.GetComponent<PlayerScore>();
+       
+        moveUp = false;
+        startPosY = transform.position.y;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        move();
+    }
+
+    private void move()
+    {
+        //y movement
+        if (moveUp == false)
+        {
+            transform.position = new Vector2(transform.position.x, transform.position.y - 1 * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = new Vector2(transform.position.x, transform.position.y + 1 * Time.deltaTime);
+        }
+
+        //When to go up
+        if (transform.position.y >= startPosY)
+        {
+            moveUp = false;
+        }
+
+        if (transform.position.y <= startPosY - offset)
+        {
+            moveUp = true;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            gameScore.setPlayerScore(collectableValue);
+            GameManager.addPlayerScore(collectableValue);
             Destroy(this.gameObject);
         }
     }

@@ -5,15 +5,11 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     private Rigidbody2D enemy;
-    private PlayerMovement player;
-    private WallCollider collide;
-    public GameObject playerobject;
-    public GameObject collider;
-
+   
     private float baseGravity;
     private float numjump;
     public float movementSpeed;
-    public float jumpFowardBoost;
+    
     public float jumpForce;
     private bool canJump;
     private bool isWall;
@@ -21,10 +17,10 @@ public class EnemyMovement : MonoBehaviour
     void Start()
     {
         enemy = GetComponent<Rigidbody2D>();
-        player = playerobject.GetComponent<PlayerMovement>();
-        collide = collider.GetComponent<WallCollider>();
-        canJump = false;
-        isWall = false;
+        
+        
+        canJump = true;
+        
         baseGravity = enemy.gravityScale;
     }
 
@@ -33,23 +29,18 @@ public class EnemyMovement : MonoBehaviour
     {
         followPlayer();
         jump();
-        if (isWall)
-        {
-            crawl();
-        }
+        
     }
 
     void followPlayer()
     {
         // Lateral Movement
-        if (enemy.position.x < player.getplayerposx())
-        {
-            enemy.velocity = new Vector2(movementSpeed, enemy.velocity.y);
-        }
+        
 
-        if (enemy.position.x > player.getplayerposx())
+        if (enemy.position.x > GameManager.getPlayerPosX() )
         {
             enemy.velocity = new Vector2(-movementSpeed, enemy.velocity.y);
+            enemy.transform.rotation = Quaternion.Euler(0, 180, 0);
         }
         // Basic Vertical movement
 
@@ -58,26 +49,19 @@ public class EnemyMovement : MonoBehaviour
 
     void jump()
     {
-        if ((enemy.position.y < player.getplayerposy()-1 && canJump == true && collide.getCollide() == true))
+        if (canJump == true )
         {
            
             
             enemy.velocity = new Vector2(enemy.velocity.x, jumpForce);
 
-            //adds jumpboost speed while in the air
+            canJump = false;
             
         }
 
     }
 
-    private void crawl()
-    {
-        
-
-
-        enemy.velocity = new Vector2(enemy.velocity.x, movementSpeed);
-
-    }
+    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -85,29 +69,12 @@ public class EnemyMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Floor"))
         {
             canJump = true;
-            Debug.Log("canJump true");
+           
         }
-        //crawling on wall
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            Debug.Log("Wall Collision");
-            isWall = true;
-        }
-
-        collide.setCollide(false);
+        
+       
+      
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            canJump = false;
-            Debug.Log("canJump False");
-        }
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            isWall = false;
-        }
-
-    }
+    
 }

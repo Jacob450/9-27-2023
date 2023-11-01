@@ -4,38 +4,44 @@ using UnityEngine;
 
 public class WorldGeneration : MonoBehaviour
 {
-    public GameObject floor;
-    public GameObject player;
-    private PlayerMovement pm;
-    
-    private float basePos;
+
+    public GameObject ground;
+    public GameObject[] obstacles; 
+    bool isFloor;
     // Start is called before the first frame update
     void Start()
     {
-        
-        pm = player.GetComponent<PlayerMovement>();
-        basePos = pm.getplayerposx();
+       
+        isFloor = true;
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(pm.getplayerposx() - basePos) ;
-        gen();
-    }
-
-    private void gen()
-    {
-        if(pm.getplayerposx() - basePos > 20) 
-        {
-            GameObject floorgen;
-
-            floorgen = Instantiate(floor);
-
-            floorgen.transform.position = new Vector2 (pm.getplayerposx()+40, 20);
-            basePos = pm.getplayerposx();
+        createFloor();
         
-        }
+        //Debug.Log(transform.position.x);
     }
+
+    private void createFloor()
+    {
+        if (isFloor == false)
+        {
+            
+            GameObject spawnedFloor = Instantiate(ground);
+            spawnedFloor.transform.position = new Vector2(transform.position.x-1, 0);
+        }
+        isFloor = true;
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            isFloor = false;
+            //Debug.Log(isFloor);
+        }
+
+    }
+    
 }

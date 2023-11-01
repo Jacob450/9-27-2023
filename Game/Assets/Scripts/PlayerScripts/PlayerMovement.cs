@@ -2,35 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Xml.Serialization;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D player;
-    public GameObject cam; 
+
 
     public float movementSpeed;
+    public float playerMovementSpeed;
     public float jumpforce;
-    public float jumpFowardBoost;
+    public float cameraPosY;
+    public double MaxStamina;
 
+    private double stamina;
     private float baseGravity;
     private float inputHorizontal;
     private float inputVertical;
-
-    private int numjump;
+  
     private bool canJump;
-    private bool isJumping;
-    private bool isWall;
+    private bool buttonDown;
+   
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameManager.setGameState(true);
+        GameManager.setPlayerSpeed(movementSpeed);
         player = GetComponent<Rigidbody2D>();
         //set to 2 so that you cannot jump in mid air as soon as the game starts
-        canJump = false;
-        isWall = false;
+        canJump = true;
         baseGravity = player.gravityScale;
+
+        
     }
     
     // Update is called once per frame
@@ -38,10 +44,6 @@ public class PlayerMovement : MonoBehaviour
     {
         moveplayer();
         jump();
-        if(isWall)
-        {
-            crawl();
-        }
         
     }
     
@@ -53,52 +55,42 @@ public class PlayerMovement : MonoBehaviour
         inputHorizontal = Input.GetAxisRaw("Horizontal");
         
         
-        player.velocity = new Vector2((movementSpeed * inputHorizontal) , player.velocity.y);
-       
-        
+        player.velocity = new Vector2( (movementSpeed) , player.velocity.y);
+        if(inputHorizontal == 1)
+        {
+            player.velocity = new Vector2((movementSpeed)+playerMovementSpeed, player.velocity.y);
+        }
+        if (inputHorizontal == -1)
+        {
+            player.velocity = new Vector2((movementSpeed) - playerMovementSpeed, player.velocity.y);
+        }
+        GameManager.setPlayerPos(player.position.x,player.position.y);
     }
 
     private void jump()
     {
+        
+        
         player.gravityScale = baseGravity;
-        if (Input.GetKeyDown(KeyCode.Space) && canJump == true)
-        {
-            isJumping = true;
-            movementSpeed += jumpFowardBoost;
-            player.velocity = new Vector2(player.velocity.x  , jumpforce);
-
-            //adds jumpbppst speed while in the air
-           // movementSpeed += jumpFowardBoost;
+        if (Input.GetKeyDown(KeyCode.Space) && canJump == true || buttonDown == true)
+        {            
+            player.velocity = new Vector2(player.velocity.x  , jumpforce);  
+            
+            canJump = false;
+            buttonDown = true;           
         }
-        
-
+       
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            buttonDown = false;
+        }
     }
 
-    private void crawl()
-    {
-        inputVertical = Input.GetAxisRaw("Vertical");
-
-
-        player.velocity = new Vector2(player.velocity.x, movementSpeed * inputVertical);
-        
-    }
+    
    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         
-        //removes jumpboost speed when hitting the floor
-        if(isJumping == true && collision.gameObject.CompareTag("Floor"))
-        {
-            movementSpeed -=  jumpFowardBoost;
-            isJumping=false;
-        }
-        //crawling on wall
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            Debug.Log("Wall Collision");
-           isWall = true;
-        }
-
         if (collision.gameObject.CompareTag("Floor"))
         {
             canJump = true;
@@ -114,18 +106,7 @@ public class PlayerMovement : MonoBehaviour
        
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            canJump = false;
-        }
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            isWall = false;
-        }
-
-    }
+    
 
 
 
