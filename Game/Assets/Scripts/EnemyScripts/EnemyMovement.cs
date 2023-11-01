@@ -5,20 +5,23 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     private Rigidbody2D enemy;
-   
+    private Rigidbody2D enemyEgg;
+    public GameObject egg;
+
     private float baseGravity;
     private float numjump;
     public float movementSpeed;
+    public float eggForce;
     
     public float jumpForce;
     private bool canJump;
-    private bool isWall;
+    private bool thrown;
     // Start is called before the first frame update
     void Start()
     {
         enemy = GetComponent<Rigidbody2D>();
-        
-        
+       
+        thrown = false;
         canJump = true;
         
         baseGravity = enemy.gravityScale;
@@ -29,7 +32,21 @@ public class EnemyMovement : MonoBehaviour
     {
         followPlayer();
         jump();
+        enemyThrowEgg();
         
+    }
+    private void enemyThrowEgg()
+    {
+       
+        if (enemy.position.x - GameManager.getPlayerPosX() < 2 && thrown == false)
+        {
+            GameObject spawnedEgg = Instantiate(egg);
+            spawnedEgg.transform.position = transform.position;
+            enemyEgg = spawnedEgg.GetComponent<Rigidbody2D>();
+
+            enemyEgg.velocity = new Vector2(enemyEgg.velocity.x, enemyEgg.velocity.y * eggForce);
+            thrown = true;
+        }
     }
 
     void followPlayer()

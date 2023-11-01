@@ -28,7 +28,7 @@ public class ThrowEgg : MonoBehaviour
     }
     private void spawnEgg()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && GameManager.getGameState() == true)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && GameManager.getGameOver() == false)
         {
             GameObject spawnedEgg = Instantiate(egg);
             spawnedEgg.transform.position = transform.position;

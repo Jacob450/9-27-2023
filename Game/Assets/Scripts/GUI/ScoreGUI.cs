@@ -17,6 +17,22 @@ public class ScoreGui : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        guiScore.text = "Score"+ GameManager.getscore();
+        currentScore();
+        highScore();
+    }
+
+    private void highScore()
+    {
+        if (GameManager.getGameOver() == true)
+        {
+            guiScore.text = "Your Score was: " + GameManager.getscore() + "\nThe Highest Score was: " + Save.loadScore();
+            
+
+        }
+    }
+
+    private void currentScore()
+    {
+        guiScore.text = "Score" + GameManager.getscore();
     }
 }

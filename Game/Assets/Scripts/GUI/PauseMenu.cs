@@ -23,7 +23,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape) && !paused)
         {
-            GameManager.setGameState(false);
+            GameManager.setGameOver(false);
             pauseMenu.SetActive(true);
             paused = true;
             Time.timeScale = 0f;
@@ -31,7 +31,7 @@ public class PauseMenu : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.Escape) && paused)
         {
-            GameManager.setGameState(true);
+            GameManager.setGameOver(true);
             pauseMenu.SetActive(false);
             paused = false;
             Time.timeScale = 1f;

@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.setGameState(true);
+        GameManager.setGameOver(false);
         GameManager.setPlayerSpeed(movementSpeed);
         player = GetComponent<Rigidbody2D>();
         //set to 2 so that you cannot jump in mid air as soon as the game starts
@@ -99,14 +99,19 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy (collision.gameObject);
         }
-        if (collision.gameObject.CompareTag("OB"))
-        {
-            SceneManager.LoadScene("SampleScene");
-        }
+        
        
     }
 
-    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("OB"))
+        {
+            GameManager.setGameOver(true);
+        }
+    }
+
+
 
 
 

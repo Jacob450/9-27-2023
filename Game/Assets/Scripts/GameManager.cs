@@ -11,6 +11,27 @@ static public class GameManager
     static private float playerSpeed;
     static private bool gameover;
 
+
+
+
+
+
+
+    //Gameover functions==================================
+    static public void setGameOver(bool g)
+    {
+        gameover = g;
+    }
+
+    static public bool getGameOver()
+    {
+        return gameover;
+    }
+
+
+
+
+    //Player Attributes===================================
     static public void setPlayerSpeed(float s)
     {
         playerSpeed = s;
@@ -21,23 +42,19 @@ static public class GameManager
         return playerSpeed;
     }
 
-    //gamestate Functions====================================
-    static public void setGameState(bool g)
-    {
-        gameover = g;
-    }
-
-    static public bool getGameState()
-    {
-        return gameover;
-    }
-
+   
+  
     //playerScore Functions==================================
     static public int getscore()
     {
         return playerScore;
     }
 
+    static public void setPlayerScore(int val)
+    {
+        playerScore = val;
+
+    }
     static public void addPlayerScore(int val)
     {
         playerScore += val;

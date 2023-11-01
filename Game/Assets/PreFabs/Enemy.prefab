@@ -354,8 +354,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bf66f83b01fc8041bd481801e4ce88b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collider: {fileID: 0}
+  egg: {fileID: 3144988047048339387, guid: 6621573526d31414fbce9a5af8a5851c, type: 3}
   movementSpeed: 9
+  eggForce: -3
   jumpForce: 10
 --- !u!50 &5129982408959940657
 Rigidbody2D:
